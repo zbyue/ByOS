@@ -11,6 +11,7 @@ objects = obj/loader.o \
 		  obj/kernel.o \
 		  obj/drivers/mouse.o \
 		  obj/drivers/keyboard.o \
+		  obj/drivers/vga.o \
 		  obj/hardware/interrupts.o \
 		  obj/hardware/interruptstubs.o
 
