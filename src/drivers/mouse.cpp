@@ -9,19 +9,19 @@ MouseEventHandler::MouseEventHandler()
 {
 }
 
-void MouseEventHandler::OnActivate()
+void MouseEventHandler::onActivate()
 {
 }
 
-void MouseEventHandler::OnMouseDown(uint8_t button)
+void MouseEventHandler::onMouseDown(uint8_t button)
 {
 }
 
-void MouseEventHandler::OnMouseUp(uint8_t button)
+void MouseEventHandler::onMouseUp(uint8_t button)
 {
 }
 
-void MouseEventHandler::OnMouseMove(int x, int y)
+void MouseEventHandler::onMouseMove(int x, int y)
 {
 }
 
@@ -74,7 +74,7 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
     {
         if(buffer[1] != 0 || buffer[2] != 0)
         {
-            handler->OnMouseMove(buffer[1], buffer[2]);
+            handler->onMouseMove((int8_t)buffer[1], (int8_t)buffer[2]);
         }
         static uint16_t* VideoMemory = (uint16_t*)0xb8000;
         for(uint8_t i = 0; i < 3; i++)
@@ -84,11 +84,11 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp)
                 // press buttons on mouse
                 if(buttons & (0x01 << i))
                 {
-                    handler->OnMouseUp(buttons); //release 
+                    handler->onMouseUp(buttons); //release
                 }
                 else
                 {
-                    handler->OnMouseDown(buttons); //press 
+                    handler->onMouseDown(buttons); //press
                 }
             }
        }

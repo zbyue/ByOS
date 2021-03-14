@@ -39,8 +39,10 @@ namespace byos
             virtual bool supportsMode(common::uint32_t width, common::uint32_t height, common::uint32_t colordepth);
             virtual bool setMode(common::uint32_t width, common::uint32_t height, common::uint32_t colordepth);
 
-            virtual void putPixel(common::uint32_t x, common::uint32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b);
-            virtual void putPixel(common::uint32_t x, common::uint32_t y, common::uint8_t colorIndex);
+            virtual void putPixel(common::int32_t x, common::int32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b);
+            virtual void putPixel(common::int32_t x, common::int32_t y, common::uint8_t colorIndex);
+
+            virtual void fillRectangle(common::uint32_t x, common::uint32_t y, common::uint32_t w, common::uint32_t h, common::uint8_t r, common::uint8_t g, common::uint8_t b);
         };
     }
 }

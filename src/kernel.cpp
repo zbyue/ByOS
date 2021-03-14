@@ -7,11 +7,16 @@
 #include "../include/drivers/keyboard.h"
 #include "../include/drivers/mouse.h"
 #include "../include/drivers/vga.h"
+#include "../include/gui/desktop.h"
+#include "../include/gui/window.h"
+
+#define GRAPHICSMODE
 
 using namespace byos;
 using namespace byos::common;
 using namespace byos::drivers;
 using namespace byos::hardware;
+using namespace byos::gui;
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -24,18 +29,21 @@ extern "C" void callConstructors()
 
 extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumber*/)
 {
-    printf("Hello, this is myos!\n");
-
     GlobalDescriptorTable gdt;
     InterruptManager interrupts(0x20, &gdt);
     
     printf("Initializing Hardware Stage 1 \n");
+
+    Desktop desktop(320,200,0x00,0x00,0xA8);
+
     DriverManager drvManager;
     PrintKeyboardEventHandler kbhandler;
     MouseToConsole mtconsole;
+#ifdef GRAPHICSMODE
 
-    KeyboardDriver keyboard(&interrupts, &kbhandler);
-    MouseDriver mouse(&interrupts, &mtconsole);
+#endif
+    KeyboardDriver keyboard(&interrupts, &desktop);
+    MouseDriver mouse(&interrupts, &desktop);
     drvManager.AddDriver(&keyboard);
     drvManager.AddDriver(&mouse);
 
@@ -46,17 +54,22 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
 
     printf("Initializing Hardware Stage 2 \n");
     drvManager.ActivateAll();
-    interrupts.Activate();
+    printf("Initializing Hardware Stage 3 \n");
+
 
     vga.setMode(320,200,8);
-    for(uint32_t y = 50; y < 150; ++y)
+    //vga.fillRectangle(0,0,320,200,0xFF,0xFF,0xFF);
+    Window win1(&desktop, 20, 20, 80, 80, 0xFF, 0xFF, 0xFF);
+    Window win2(&desktop, 100, 100, 40, 40, 0x00, 0x00, 0x00);
+    desktop.addChild(&win1);
+    desktop.addChild(&win2);
+
+
+    interrupts.Activate();
+
+    while(1)
     {
-        for(uint32_t x = 100; x < 200; ++x)
-        {
-            vga.putPixel(x, y, 0x00, 0x00, 0xA8);
-        }
+        desktop.draw(&vga);
     }
-    printf("Initializing Hardware Stage 3 \n");
-    while(1);
 }
 

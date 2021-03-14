@@ -83,16 +83,21 @@ uint8_t* VideoGraphicsArray::getFrameBufferSegment()
     }
 }
 
-void VideoGraphicsArray::putPixel(common::uint32_t x, common::uint32_t y, common::uint8_t colorIndex)
+void VideoGraphicsArray::putPixel(common::int32_t x, common::int32_t y, common::uint8_t colorIndex)
 {
+    if(x < 0 || x > 320 || y < 0 || y > 200)
+        return ;
     uint8_t* pixelAddress = getFrameBufferSegment() + 320*y + x;
     *pixelAddress = colorIndex;
 }
 
 uint8_t VideoGraphicsArray::getColorIndex(common::uint8_t r, common::uint8_t g, common::uint8_t b)
 {
-    if(r == 0x00, g == 0x00, b== 0xA8)
-        return 0x01;
+    if(r == 0x00, g == 0x00, b== 0x00) return 0x00; // black
+    if(r == 0x00, g == 0x00, b== 0xA8) return 0x01; // blue
+    if(r == 0x00, g == 0xA8, b== 0x00) return 0x02; // green
+    if(r == 0xA8, g == 0x00, b== 0x00) return 0x04; // red
+    if(r == 0xFF, g == 0xFF, b== 0xFF) return 0x3F; // white
 }
 
 
@@ -130,7 +135,19 @@ bool VideoGraphicsArray::setMode(common::uint32_t width, common::uint32_t height
     return true;
 }
 
-void VideoGraphicsArray::putPixel(common::uint32_t x, common::uint32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b)
+void VideoGraphicsArray::putPixel(common::int32_t x, common::int32_t y, common::uint8_t r, common::uint8_t g, common::uint8_t b)
 {
     putPixel(x, y, getColorIndex(r, g, b));
 }
+
+void VideoGraphicsArray::fillRectangle(common::uint32_t x, common::uint32_t y, common::uint32_t w, common::uint32_t h, common::uint8_t r, common::uint8_t g, common::uint8_t b)
+{
+    for(uint32_t Y = y; Y < y+h; ++Y)
+    {
+        for(uint32_t X = x; X < x+w; ++X)
+        {
+            putPixel(X, Y, r, g, b);
+        }
+    }
+}
+

@@ -16,10 +16,10 @@ namespace byos
         public:
             MouseEventHandler();
             
-            virtual void OnActivate();
-            virtual void OnMouseDown(common::uint8_t button);
-            virtual void OnMouseUp(common::uint8_t button);
-            virtual void OnMouseMove(int x, int y);
+            virtual void onActivate();
+            virtual void onMouseDown(common::uint8_t button);
+            virtual void onMouseUp(common::uint8_t button);
+            virtual void onMouseMove(int x, int y);
         };
 
         class MouseDriver : public hardware::InterruptHandler, public Driver 
@@ -50,8 +50,10 @@ namespace byos
             {
             }
 
-            void OnMouseMove(int xoffset, int yoffset)
+            void onMouseMove(int xoffset, int yoffset)
             {
+                xoffset /= 2;
+                yoffset /= 2;
                 static common::uint16_t* VideoMemory = (common::uint16_t*)0xb8000;
                 VideoMemory[80*y+x] = ((VideoMemory[80*y+x] & 0xF000) >> 4)
                                     | ((VideoMemory[80*y+x] & 0x0F00) << 4)

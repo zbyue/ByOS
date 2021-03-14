@@ -16,8 +16,8 @@ namespace byos
         public:
             KeyboardEventHandler();
 
-            virtual void OnKeyDown(char);
-            virtual void OnKeyUp(char);
+            virtual void onKeyDown(char);
+            virtual void onKeyUp(char);
         };
 
         class KeyboardDriver : public hardware::InterruptHandler, public Driver 
@@ -39,7 +39,7 @@ namespace byos
         class PrintKeyboardEventHandler : public KeyboardEventHandler
         {
         public:
-            virtual void OnKeyDown(char c)
+            virtual void onKeyDown(char c)
             {
                 char* foo = " ";
                 foo[0] = c;
