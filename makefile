@@ -9,9 +9,13 @@ objects = obj/loader.o \
 		  obj/hardware/port.o \
 		  obj/hardware/pci.o \
 		  obj/kernel.o \
+		  obj/multitasking.o \
 		  obj/drivers/mouse.o \
 		  obj/drivers/keyboard.o \
 		  obj/drivers/vga.o \
+		  obj/gui/desktop.o \
+		  obj/gui/widget.o \
+		  obj/gui/window.o \
 		  obj/hardware/interrupts.o \
 		  obj/hardware/interruptstubs.o
 
