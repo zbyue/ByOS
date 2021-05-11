@@ -9,7 +9,10 @@ objects = obj/loader.o \
 		  obj/hardware/port.o \
 		  obj/hardware/pci.o \
 		  obj/kernel.o \
+		  obj/memorymanagement.o\
 		  obj/multitasking.o \
+		  obj/drivers/amd_am79c973.o\
+		  obj/drivers/ata.o\
 		  obj/drivers/mouse.o \
 		  obj/drivers/keyboard.o \
 		  obj/drivers/vga.o \

@@ -2,7 +2,7 @@
 // Created by zby on 3/2/21.
 //
 
-#include "../../include/drivers/vga.h"
+#include <drivers/vga.h>
 
 using namespace byos::drivers;
 using namespace byos::common;

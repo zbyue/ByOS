@@ -1,7 +1,10 @@
 #include "../../include/hardware/pci.h"
 #include "../../include/drivers/driver.h"
 #include "../../include/common/io.h"
+#include "../../include/memorymanagement.h"
+#include <drivers/amd_am79c973.h>
 
+//using namespace byos;
 using namespace byos::common;
 using namespace byos::hardware;
 using namespace byos::drivers;
@@ -131,11 +134,18 @@ PciDeviceDescriptor PciController::getDeviceDescriptor(common::uint16_t bus, com
 
 Driver* PciController::getDriver(PciDeviceDescriptor dev,
                                  hardware::InterruptManager *interruptManager){
+    Driver *driver = 0;
     switch (dev.vendor_id) {
         case 0x1022: //AMD
             switch (dev.device_id) {
                 case 0x2000: //am79c973
-                printf("AMD am79c973");
+                    driver = (amd_am79c973*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c973));
+                    if(driver != 0)
+                    {
+                        new (driver) amd_am79c973(&dev, interruptManager);
+                    }
+                    printf("AMD am79c973");
+                    return driver;
                     break;
 
             }

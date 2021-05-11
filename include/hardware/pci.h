@@ -5,6 +5,7 @@
 #include "../common/types.h"
 #include "../drivers/driver.h"
 #include "interrupts.h"
+#include "../memorymanagement.h"
 
 namespace byos
 {

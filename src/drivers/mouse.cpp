@@ -1,5 +1,5 @@
-#include "../../include/drivers/mouse.h"
-#include "../../include/common/io.h"
+#include <drivers/mouse.h>
+#include <common/io.h>
 
 using namespace byos::common;
 using namespace byos::drivers;

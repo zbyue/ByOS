@@ -1,6 +1,6 @@
 
-#include "../../include/drivers/keyboard.h"
-#include "../../include/common/io.h"
+#include <drivers/keyboard.h>
+#include <common/io.h>
 
 using namespace byos::drivers;
 using namespace byos::hardware;

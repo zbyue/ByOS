@@ -1,15 +1,18 @@
-#include "../include/common/types.h"
-#include "../include/gdt.h"
-#include "../include/hardware/interrupts.h"
-#include "../include/hardware/pci.h"
-#include "../include/common/io.h"
-#include "../include/drivers/driver.h"
-#include "../include/drivers/keyboard.h"
-#include "../include/drivers/mouse.h"
-#include "../include/drivers/vga.h"
-#include "../include/gui/desktop.h"
-#include "../include/gui/window.h"
-#include "../include/multitasking.h"
+#include <common/types.h>
+#include <gdt.h>
+#include <hardware/interrupts.h>
+#include <hardware/pci.h>
+#include <common/io.h>
+#include <drivers/amd_am79c973.h>
+#include <drivers/ata.h>
+#include <drivers/driver.h>
+#include <drivers/keyboard.h>
+#include <drivers/mouse.h>
+#include <drivers/vga.h>
+#include <gui/desktop.h>
+#include <gui/window.h>
+#include <multitasking.h>
+#include <memorymanagement.h>
 
 //#define GRAPHICSMODE
 
@@ -53,16 +56,41 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
     GlobalDescriptorTable gdt;
     TaskManager taskManager;
 
+    uint32_t * memupper = (uint32_t*)((size_t)multiboot_structure + 8);
+    size_t heap = 10 * 1024 * 1024;
+    MemoryManager memoryManager(heap, (*memupper)*1024 - heap - 10*1024);
+
+    printf("the size of MemoryChunk:");
+    printfHex(sizeof (MemoryChunk));
+    //printf("\n");
+    printf("the size of int:");
+    printfHex(sizeof (int));
+    //printf("\n");
+    printf("heap: 0x");
+    printfHex((heap >> 24) & 0xFF);
+    printfHex((heap >> 16) & 0xFF);
+    printfHex((heap >> 8) & 0xFF);
+    printfHex((heap) & 0xFF);
+
+    void *allocated = memoryManager.malloc(1024);
+    printf("\nallocated: 0x");
+    printfHex(((size_t)allocated >> 24) & 0xFF);
+    printfHex(((size_t)allocated >> 16) & 0xFF);
+    printfHex(((size_t)allocated >> 8) & 0xFF);
+    printfHex(((size_t)allocated) & 0xFF);
+    printf("\n");
+    /*
     Task task1(&gdt, taskA);
     Task task2(&gdt, taskB);
     Task task3(&gdt, taskC);
     taskManager.addTask(&task1);
     taskManager.addTask(&task2);
     taskManager.addTask(&task3);
+    */
 
     InterruptManager interrupts(0x20, &gdt, &taskManager);
     
-    printf("Initializing Hardware Stage 1 \n");
+    // printf("Initializing Hardware Stage 1 \n");
 
 
 
@@ -88,19 +116,35 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*magicnumb
     PciController pciController;
     pciController.selectDrivers(&drvManager, &interrupts);
 
-
-
-    printf("Initializing Hardware Stage 2 \n");
+    ///printf("Initializing Hardware Stage 2 \n");
     drvManager.ActivateAll();
-    printf("Initializing Hardware Stage 3 \n");
+    // printf("Initializing Hardware Stage 3 \n");
 
+    //  interrupt 14
+    AdvancedTechnologyAttachment ata0m(0x1F0, true);
+    printf("ATA primary Master: ");
+    ata0m.identify();
+    AdvancedTechnologyAttachment ata0s(0x1F0, false);
+    printf("ATA primary Slave: ");
+    ata0s.identify();
 
+    char* ataBuffer = "this is the content written into hard drive";
+    ata0s.write28(0, (uint8_t*)ataBuffer, 43);
+    ata0s.flush();
 
+    ata0s.read28(0, (uint8_t*)ataBuffer, 43);
+    //  interrupt 15
+    AdvancedTechnologyAttachment ata1m(0x170, true);
+    AdvancedTechnologyAttachment ata1s(0x170, false);
 
-
-
+    // third: 0x1E8
+    // fourth: 0x168
 
     interrupts.Activate();
+    /*
+    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
+    eth0->send((uint8_t*)"Hello Network", 13);
+    */
 
     while(1)
     {

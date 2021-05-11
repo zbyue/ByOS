@@ -1,4 +1,4 @@
-#include "../../include/drivers/driver.h"
+#include <drivers/driver.h>
 
 using namespace byos::drivers;
 
